@@ -27,10 +27,10 @@ function SignUpPage(){
         console.log('uhull', formData);
 
 
-        //const promise = axios.post(URL, formData);
+        const promise = axios.post(URL, formData);
 
-       // promise.then(handleSuccess);
-      //  promise.catch(handleError);
+        promise.then(handleSuccess);
+        promise.catch(handleError);
     }
 
     function handleSuccess(response){
@@ -39,7 +39,8 @@ function SignUpPage(){
     };
 
     function handleError(err){
-
+        alert (err.response.data.message);
+        setLoad(false);
     }
 
     return(
