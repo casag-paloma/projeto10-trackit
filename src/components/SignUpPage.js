@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import logo from '../assets/logo.png'
+import LoadingSpinner from './LoadingSpinner';
 
 function SignUpPage(){
 
@@ -42,18 +43,34 @@ function SignUpPage(){
         alert (err.response.data.message);
         setLoad(false);
     }
+    
+    function toSignUp(){
+        if(load) return <LoadingSpinner/>
+        else return <p> Cadastrar </p>
+    }
 
-    return(
-        <>
-            <img src={logo} alt='Logo' />
+    const signUpButton = toSignUp();
+
+    function renderForm(){
+        
+        return(
             <form onSubmit={signUp}>
                 <input disabled={load} type='email' placeholder='email' value={email} onChange={(e) => setEmail(e.target.value) } required/>
                 <input disabled={load} type='password' placeholder='senha' value={password} onChange={(e) => setPassword(e.target.value) } required />
                 <input disabled={load} type='text' placeholder='nome' value={name} onChange={(e) => setName(e.target.value) } required />
                 <input disabled={load} type='url' placeholder='foto' value={image} onChange={(e) => setImage(e.target.value) } required />
-                <button type='submit' disabled={load} > Cadastrar </button>
+                <button type='submit' disabled={load} > {signUpButton} </button>
             </form>
+        )
+    }
 
+    const signUpForm = renderForm();
+
+
+    return(
+        <>
+            <img src={logo} alt='Logo' />
+            <div> {signUpForm}</div>
             <Link to='/'>
                 <span> Já tem uma conta? Faça login!</span>
             </Link>
