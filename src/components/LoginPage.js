@@ -2,12 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import {useState, useContext} from 'react';
 import axios from "axios";
 import logo from '../assets/logo.png'
+import UserContext from "../contexts/UserContext";
 import TokenContext from "../contexts/TokenContext";
 import LoadingSpinner from "./LoadingSpinner";
 
 function LoginPage(){
     const URL = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login'
 
+    const {setUser} = useContext(UserContext);
     const {setToken} = useContext(TokenContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -33,7 +35,8 @@ function LoginPage(){
     }
 
     function handleSuccess(response){
-        setToken(response.data.token)
+        setUser(response.data.image)
+        setToken(response.data.token);
         navigate('/hoje')
         console.log(response.data, response.data.token);
     };
