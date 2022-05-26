@@ -6,7 +6,7 @@ function Menu(){
     return (
         <Container>
             <StyledLink to='/habitos'> Hábitos </StyledLink>
-            <StyledLink to='/habitos'> {CircularProgression()} </StyledLink>
+            <StyledLink to='/hoje'> hoje </StyledLink>
             <StyledLink to='/historico'> Histórico </StyledLink>
         </Container>
     )
