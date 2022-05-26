@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import CircularProgression from "./CircularProgression";
 
 function Menu(){
     return (
         <Container>
-            <Link to='/habitos'> Hábitos </Link>
-            <Link to='/hoje'> Hoje </Link>
-            <Link to='/historico'> Histórico </Link>
+            <StyledLink to='/habitos'> Hábitos </StyledLink>
+            <StyledLink to='/habitos'> {CircularProgression()} </StyledLink>
+            <StyledLink to='/historico'> Histórico </StyledLink>
         </Container>
     )
 }
@@ -25,5 +26,16 @@ const Container = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    align-items: center;
+`
+const StyledLink = styled(Link)`
+    font-family: 'Lexend Deca';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 17.976px;
+    line-height: 22px;
+    text-align: center;
 
+    color: #52B6FF;
+    text-decoration: none;
 `

@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react/";
 import UserContext from "../contexts/UserContext";
 import TokenContext from "../contexts/TokenContext";
+import PercentageContext from "../contexts/PercentageContext";
 import HabitsPage from "./HabitsPage";
 import HistoryPage from "./HistoryPage";
 import LoginPage from "./LoginPage";
@@ -13,10 +14,12 @@ function App(){
 
     const [user, setUser] = useState("");
     const [token, setToken] = useState("");
+    const [percentage, setPercentage] = useState("");
 
     return(
         <UserContext.Provider value={{user, setUser}}>
             <TokenContext.Provider value={{token, setToken}}>
+            <PercentageContext.Provider value={{percentage, setPercentage}}>
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<LoginPage/>}/>
@@ -26,6 +29,7 @@ function App(){
                         <Route path="/historico" element={<HistoryPage/>}/>
                     </Routes>
                 </BrowserRouter>
+            </PercentageContext.Provider>
             </TokenContext.Provider>
         </UserContext.Provider>
     )
