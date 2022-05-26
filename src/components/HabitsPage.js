@@ -1,16 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
+import axios from 'axios'
 import styled from "styled-components";
 import Header from "./Header";
 import Menu from "./Menu";
+import TokenContext from '../contexts/TokenContext'
 
 function HabitsPage(){
+
+    const URL = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits'
+
+    const {token} = useContext(TokenContext);
 
     const [ create, setCreate] = useState(false);
     const [ habitName, setHabitName] = useState('');
     const [ chosenDays, setChosenDays] = useState([]);
     const [ loading, setLoading ] = useState(false);
+    const [ habitsUser, setHabitsUser] = useState([]);
 
-    function renderNewHabit(){
+    useEffect(() => {
+        
+        const config = {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }}
+
+        const promise = axios.get(URL, config);
+
+        promise.then(response => console.log(response.data))
+        promise.catch(err => console.log(err.response.data))
+
+    }, [])
+
+
+    function addNewHabit(){
         setCreate(true);
     }
 
@@ -26,24 +48,32 @@ function HabitsPage(){
     };
 
     const myWeekdays = renderWeekDays();
+
+    function renderNewHabitsForm(){
+        if(create){
+            return(
+                    <HabitForm>
+                        <input type="text" placeholder="nome do hábito" value={habitName} onChange={(e) => setHabitName(e.target.value)}></input>
+                        {myWeekdays}
+                        <Buttons>
+                            <CancelButton loading={loading} onClick={()=> setCreate(false)}> Cancelar </CancelButton>
+                            <SaveButton loading={loading} onClick={submitNewHabit}> Salvar</SaveButton>
+                        </Buttons>
+                    </HabitForm>
+            )
+        }
+    }
     
+    const newHabitForm = renderNewHabitsForm();
+
     function renderHabits(){
         return(
             <>
-                <HabitForm>
-                    <input type="text" placeholder="nome do hábito" value={habitName} onChange={(e) => setHabitName(e.target.value)}></input>
-                    {myWeekdays}
-                    <Buttons>
-                        <CancelButton loading={loading}> Cancelar </CancelButton>
-                        <SaveButton loading={loading} onClick={submitNewHabit}> Salvar</SaveButton>
-                    </Buttons>
-
-                </HabitForm>
                 <p>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>
             </>
         )
     };
-
+    
     const myHabits = renderHabits();
 
     function submitNewHabit(){
@@ -55,8 +85,11 @@ function HabitsPage(){
             <Header/>
             <MyHabitsHeader>
                 <h1> Essa é uma HabitsPage</h1>
-                <button onClick={renderNewHabit}> + </button>
+                <button onClick={addNewHabit}> + </button>
             </MyHabitsHeader>
+            <MyNewHabitForm>
+                <div>{newHabitForm}</div>
+            </MyNewHabitForm>
             <MyHabits>{myHabits}</MyHabits>
             <Menu/>
         </Container>
@@ -124,6 +157,7 @@ const MyHabitsHeader = styled.div`
     }
 
 `
+const MyNewHabitForm = styled.div``
 
 const MyHabits = styled.div`
     background-color: green;
