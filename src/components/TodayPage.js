@@ -1,23 +1,32 @@
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import * as dayjs from 'dayjs'
+import 'dayjs/locale/pt-br' // import locale
+
 import TokenContext from "../contexts/TokenContext";
 import Header from "./Header";
 import Menu from "./Menu";
 
 function TodayPage(){
-
+    
     const URL = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today'
-
+    
     const {token} = useContext(TokenContext);
     
     const config = {
-    headers: {
-        "Authorization": `Bearer ${token}`
-    }}
-
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    }
+        
     const [habitsList, setHabitsList]= useState([]);
-
+    const dayjs = require('dayjs')
+    dayjs.locale('pt-br')
+    const today = dayjs().format('dddd, DD/MM');
+    const Today = today.substring(0, 1).toUpperCase() + today.substring(1);
+    
+        
     useEffect(() => {
         const promise = axios.get(URL, config);
 
@@ -49,7 +58,7 @@ function TodayPage(){
         <Container>
         <Header/>
         <MyTodayHeader>
-            <h1> Essa é uma TodayPage</h1>
+            <h1>{Today}</h1>
         </MyTodayHeader>
         <MyTodayHabits>
             {renderMyTodayHabits()}
@@ -80,7 +89,17 @@ const Container = styled.div`
 margin-top: 70px;
 `
 
-const MyTodayHeader = styled.div``
+const MyTodayHeader = styled.div`
+    h1{    
+        font-family: 'Lexend Deca';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 23px;
+        line-height: 29px;
+
+        color: #126BA5;
+    }
+`
 const MyTodayHabits = styled.div``
 
 const MyHabitBox = styled.div`
