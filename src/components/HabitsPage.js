@@ -78,7 +78,7 @@ function HabitsPage(){
             return   <p>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>
         } else{
             return (
-                habitsUser.map(habit => <HabitUser key={habit.id} id={habit.id} name={habit.name} days={habit.days} />)
+                habitsUser.map(habit => <HabitUser key={habit.id} id={habit.id} name={habit.name} days={habit.days} setHabitsUser={setHabitsUser} />)
             )
         }
     };
@@ -102,7 +102,10 @@ function HabitsPage(){
 
     function handleSuccessPostNewHabit(response){
         console.log(response.data);
-        renderHabits();
+
+        const promise = axios.get(URL, config);
+        promise.then(handleSucessGetList)
+        promise.catch(handleError)
     }
 
     return(
@@ -140,7 +143,17 @@ function Day({name, id, chosenDays, setChosenDays}){
     )
 }
 
-function HabitUser({id, name, days}){
+function HabitUser({id, name, days, setHabitsUser}){
+    const URL = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits'
+
+    const {token} = useContext(TokenContext);
+    
+    const config = {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    };
+    
     const weekdayslist = ['D', 'S', 'T', 'Q', 'Q', 'S','S'];
 
     function showDaysHabits(){
@@ -158,16 +171,35 @@ function HabitUser({id, name, days}){
         )
     }
 
-    function deleteHabit(){
+    function deleteHabit(id){
         if(window.confirm('Você realmente quer deletar esse hábito?')){
+
+            const promise = axios.delete(`${URL}/${id}`, config);
+            promise.then(handleSuccessDeleteHabit);
+            promise.catch(handleError);
         }
     }
+
+    function handleSuccessDeleteHabit(){
+        const promise = axios.get(URL, config);
+        promise.then(handleSucessGetList)
+        promise.catch(handleError)
+    }
+
+    function handleSucessGetList(response){
+        setHabitsUser(response.data )
+    }
+
+    function handleError(err){
+        console.log(err.response.data)
+    }
+
 
     return(
         <div>
             <p>{name}</p>
             {showDaysHabits()}
-            <ion-icon name="trash-outline" onClick={deleteHabit}></ion-icon>
+            <ion-icon name="trash-outline" onClick={() => deleteHabit(id)}></ion-icon>
         </div>
     )
 }
