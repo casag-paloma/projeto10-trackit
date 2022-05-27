@@ -44,11 +44,20 @@ function HabitsPage(){
     }
 
     function renderWeekDays(){       
-        const weekdayslist = ['D', 'S', 'T', 'Q', 'Q', 'S','S']
+        const weekdayslist = ['D', 'S', 'T', 'Q', 'Q', 'S','S'];
+
+        const weekdaysListToShow = weekdayslist.map((name, index) => {
+            if(chosenDays.includes(index)){
+                return {name: name, chosen: true}
+            } else{
+                return {name: name, chosen: false}
+            }
+        })
+
  
         return(
             <>
-                {weekdayslist.map((iten, index) => < Day key={index} name={iten} id={index} loading={loading} chosenDays={chosenDays} setChosenDays={setChosenDays} />)}
+                {weekdaysListToShow.map((day, index) => < Day key={index} name={day.name} id={index} loading={loading} isChosen={day.chosen} chosenDays={chosenDays} setChosenDays={setChosenDays} />)}
             </>
         )
     };
@@ -99,6 +108,9 @@ function HabitsPage(){
     }
 
     function handleSuccessPostNewHabit(response){
+        setHabitName('');
+        setChosenDays([]);
+        setLoading(false);
         setCreate(false);
         console.log(response.data);
 
@@ -123,9 +135,12 @@ function HabitsPage(){
     )
 }
 
-function Day({name, id, chosenDays, setChosenDays, loading}){
+function Day({name, id, chosenDays, setChosenDays, loading, isChosen}){
     const [chosen, setChosen] = useState(false);
-    
+    console.log(isChosen);
+
+    useEffect(()=> setChosen(isChosen), []);
+
     function chooseDay(id){
         if(chosen){
             setChosenDays(chosenDays.filter(day => day !== id)) 
@@ -138,6 +153,7 @@ function Day({name, id, chosenDays, setChosenDays, loading}){
     }
 
     return(
+
         <DayButton disabled={loading} chosen={chosen} onClick={()=> chooseDay(id)}>{name}</DayButton>
     )
 }
