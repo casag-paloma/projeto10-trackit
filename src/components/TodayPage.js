@@ -71,14 +71,52 @@ function TodayPage(){
 
 function Habit({id, name, isDone, currentSequence, highestSequence}){
 
+    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`
+    
+
+    const {token} = useContext(TokenContext);
+    
+    const config = {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    }
+
+    const [checked, setChecked] = useState(false);
+    useEffect(()=> setChecked(isDone), []);
+
+
+    function checkHabit(id){
+        if(checked){
+            const promise = axios.post(`${URL}/uncheck`, "", config);
+    
+            promise.then((response)=> console.log(response.data));
+            promise.catch(handleError);
+            setChecked(false);
+        } 
+        else{
+    
+            const promise = axios.post(`${URL}/check`, "", config);
+    
+            promise.then((response)=> console.log(response.data));
+            promise.catch(handleError);
+            setChecked(true);
+            
+        }
+    }
+
+    function handleError(err){
+        alert(err.response.data.message);
+    }
+
     return(
-        <MyHabitBox>
+        <MyHabitBox checked={checked}>
             <div>
                 <h1>{name}</h1>
                 <p>{`Sequência atual: ${currentSequence} dias
 Seu recorde: ${highestSequence} dias`}</p>
             </div>
-            <button><ion-icon name="checkmark"></ion-icon></button>
+            <button onClick={()=> checkHabit(id)}><ion-icon name="checkmark"></ion-icon></button>
         </MyHabitBox>
     )
 }
@@ -104,19 +142,16 @@ const MyTodayHabits = styled.div``
 
 const MyHabitBox = styled.div`
     width: 340px;
-    height: 94px;
-    
-    background: #FFFFFF;
+    height: 100%;    
+    background: lightblue;
     border-radius: 5px;
 
     button{
         box-sizing: border-box;
-
-        position: absolute;
         width: 69px;
         height: 69px;
             
-        background: #EBEBEB;
+        background: ${props => props.checked ? '#8FC549' : '#EBEBEB' };
         border: 1px solid #E7E7E7;
         border-radius: 5px;
     }
