@@ -39,7 +39,6 @@ function HabitsPage(){
         console.log(err.response.data)
     }
 
-
     function addNewHabit(){
         setCreate(true);
     }
@@ -49,7 +48,7 @@ function HabitsPage(){
  
         return(
             <>
-                {weekdayslist.map((iten, index) => < Day key={index} name={iten} id={index} chosenDays={chosenDays} setChosenDays={setChosenDays} />)}
+                {weekdayslist.map((iten, index) => < Day key={index} name={iten} id={index} loading={loading} chosenDays={chosenDays} setChosenDays={setChosenDays} />)}
             </>
         )
     };
@@ -60,11 +59,11 @@ function HabitsPage(){
         if(create){
             return(
                     <HabitForm>
-                        <input type="text" placeholder="nome do hábito" value={habitName} onChange={(e) => setHabitName(e.target.value)}></input>
+                        <input disabled={loading} type="text" placeholder="nome do hábito" value={habitName} onChange={(e) => setHabitName(e.target.value)}></input>
                         {myWeekdays}
                         <Buttons>
-                            <CancelButton loading={loading} onClick={()=> setCreate(false)}> Cancelar </CancelButton>
-                            <SaveButton loading={loading} onClick={submitNewHabit}> Salvar</SaveButton>
+                            <CancelButton disabled={loading} onClick={()=> setCreate(false)}> Cancelar </CancelButton>
+                            <SaveButton disabled={loading} onClick={submitNewHabit}> Salvar</SaveButton>
                         </Buttons>
                     </HabitForm>
             )
@@ -87,7 +86,6 @@ function HabitsPage(){
 
     function submitNewHabit(){
         setLoading(true);
-        setCreate(false);
 
         const body = {
             name: habitName,
@@ -101,6 +99,7 @@ function HabitsPage(){
     }
 
     function handleSuccessPostNewHabit(response){
+        setCreate(false);
         console.log(response.data);
 
         const promise = axios.get(URL, config);
@@ -124,7 +123,7 @@ function HabitsPage(){
     )
 }
 
-function Day({name, id, chosenDays, setChosenDays}){
+function Day({name, id, chosenDays, setChosenDays, loading}){
     const [chosen, setChosen] = useState(false);
     
     function chooseDay(id){
@@ -139,7 +138,7 @@ function Day({name, id, chosenDays, setChosenDays}){
     }
 
     return(
-        <DayButton chosen={chosen} onClick={()=> chooseDay(id)}>{name}</DayButton>
+        <DayButton disabled={loading} chosen={chosen} onClick={()=> chooseDay(id)}>{name}</DayButton>
     )
 }
 
