@@ -48,7 +48,7 @@ function TodayPage(){
     function renderMyTodayHabits(){
 
         return(
-            habitsList.map((habit, index) => <Habit key={index} id={habit.id} name={habit.name} isDone={habit.done} currentSequence={habit.currentSequence} highestSequence={habit.highestSequence}  />)
+            habitsList.map((habit, index) => <Habit key={index} id={habit.id} name={habit.name} isDone={habit.done} currentSequence={habit.currentSequence} highestSequence={habit.highestSequence} setHabitsList={setHabitsList}  />)
         )
             
     }
@@ -69,7 +69,7 @@ function TodayPage(){
     )
 }
 
-function Habit({id, name, isDone, currentSequence, highestSequence}){
+function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsList}){
 
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`
     
@@ -90,7 +90,7 @@ function Habit({id, name, isDone, currentSequence, highestSequence}){
         if(checked){
             const promise = axios.post(`${URL}/uncheck`, "", config);
     
-            promise.then((response)=> console.log(response.data));
+            promise.then(handleSucess);
             promise.catch(handleError);
             setChecked(false);
         } 
@@ -98,11 +98,21 @@ function Habit({id, name, isDone, currentSequence, highestSequence}){
     
             const promise = axios.post(`${URL}/check`, "", config);
     
-            promise.then((response)=> console.log(response.data));
+            promise.then(handleSucess);
             promise.catch(handleError);
             setChecked(true);
             
         }
+    }
+
+    function handleSucess(){
+        const URL2 = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today'
+
+        const promise = axios.get(URL2, config);
+
+        promise.then((response) => setHabitsList(response.data))
+        promise.catch(handleError)
+
     }
 
     function handleError(err){
@@ -113,8 +123,8 @@ function Habit({id, name, isDone, currentSequence, highestSequence}){
         <MyHabitBox checked={checked}>
             <div>
                 <h1>{name}</h1>
-                <p>{`Sequência atual: ${currentSequence} dias
-Seu recorde: ${highestSequence} dias`}</p>
+                <p>{`Sequência atual: `}</p> <h5>{`${currentSequence} dias`}</h5>
+                <p> {`Seu recorde: `}</p> <h6>{`${highestSequence} dias`}</h6>
             </div>
             <button onClick={()=> checkHabit(id)}><ion-icon name="checkmark"></ion-icon></button>
         </MyHabitBox>
@@ -151,8 +161,14 @@ const MyHabitBox = styled.div`
         width: 69px;
         height: 69px;
             
-        background: ${props => props.checked ? '#8FC549' : '#EBEBEB' };
+        background-color: ${props => props.checked ? '#8FC549' : '#EBEBEB' };
         border: 1px solid #E7E7E7;
         border-radius: 5px;
     }
+
+    h5{
+        color: ${props => props.checked ? '#8FC549' : '#666666' };
+    }
+
+
 `
