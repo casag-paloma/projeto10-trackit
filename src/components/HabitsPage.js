@@ -10,6 +10,12 @@ function HabitsPage(){
     const URL = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits'
 
     const {token} = useContext(TokenContext);
+    
+    const config = {
+    headers: {
+        "Authorization": `Bearer ${token}`
+    }}
+
 
     const [ create, setCreate] = useState(false);
     const [ habitName, setHabitName] = useState('');
@@ -18,28 +24,29 @@ function HabitsPage(){
     const [ habitsUser, setHabitsUser] = useState([]);
 
     useEffect(() => {
-        
-        const config = {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }}
-
         const promise = axios.get(URL, config);
 
-        promise.then(response => console.log(response.data))
-        promise.catch(err => console.log(err.response.data))
+        promise.then(handleSucessGetList)
+        promise.catch(handleError)
 
     }, [])
+
+    function handleSucessGetList(response){
+        setHabitsUser(response.data )
+    }
+
+    function handleError(err){
+        console.log(err.response.data)
+    }
 
 
     function addNewHabit(){
         setCreate(true);
     }
 
-    function renderWeekDays(){
-
+    function renderWeekDays(){       
         const weekdayslist = ['D', 'S', 'T', 'Q', 'Q', 'S','S']
-        
+ 
         return(
             <>
                 {weekdayslist.map((iten, index) => < Day key={index} name={iten} id={index} chosenDays={chosenDays} setChosenDays={setChosenDays} />)}
@@ -67,17 +74,35 @@ function HabitsPage(){
     const newHabitForm = renderNewHabitsForm();
 
     function renderHabits(){
-        return(
-            <>
-                <p>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>
-            </>
-        )
+        if( habitsUser.length === 0){
+            return   <p>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>
+        } else{
+            return (
+                habitsUser.map(habit => <HabitUser key={habit.id} id={habit.id} name={habit.name} days={habit.days} />)
+            )
+        }
     };
     
     const myHabits = renderHabits();
 
     function submitNewHabit(){
         setLoading(true);
+        setCreate(false);
+
+        const body = {
+            name: habitName,
+            days: chosenDays 
+        }
+
+        const promise = axios.post(URL, body, config);
+
+        promise.then(handleSuccessPostNewHabit);
+        promise.catch(handleError);
+    }
+
+    function handleSuccessPostNewHabit(response){
+        console.log(response.data);
+        renderHabits();
     }
 
     return(
@@ -112,6 +137,38 @@ function Day({name, id, chosenDays, setChosenDays}){
 
     return(
         <DayButton chosen={chosen} onClick={()=> chooseDay(id)}>{name}</DayButton>
+    )
+}
+
+function HabitUser({id, name, days}){
+    const weekdayslist = ['D', 'S', 'T', 'Q', 'Q', 'S','S'];
+
+    function showDaysHabits(){
+        
+        const weekdaysListToShow = weekdayslist.map((name, index) => {
+            if(days.includes(index)){
+                return {name: name, chosen: true}
+            } else{
+                return {name: name, chosen: false}
+            }
+        })
+
+        return(
+            weekdaysListToShow.map((day, index) =>  <DayButton key={index} chosen={day.chosen}>{day.name}</DayButton>)
+        )
+    }
+
+    function deleteHabit(){
+        if(window.confirm('Você realmente quer deletar esse hábito?')){
+        }
+    }
+
+    return(
+        <div>
+            <p>{name}</p>
+            {showDaysHabits()}
+            <ion-icon name="trash-outline" onClick={deleteHabit}></ion-icon>
+        </div>
     )
 }
 
@@ -160,7 +217,6 @@ const MyHabitsHeader = styled.div`
 const MyNewHabitForm = styled.div``
 
 const MyHabits = styled.div`
-    background-color: green;
 `
 const HabitForm = styled.div`
     background-color: red;
