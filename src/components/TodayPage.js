@@ -24,12 +24,13 @@ function TodayPage(){
         
     const [habitsList, setHabitsList]= useState([]);
     const [habitsChecked, setHabitsChecked] = useState(0);
+    let qtd =0;
     const dayjs = require('dayjs')
     dayjs.locale('pt-br')
     const today = dayjs().format('dddd, DD/MM');
     const Today = today.substring(0, 1).toUpperCase() + today.substring(1);
     
-        
+    
     useEffect(() => {
         const promise = axios.get(URL, config);
 
@@ -48,12 +49,27 @@ function TodayPage(){
     }
     console.log(habitsList);
 
+    
     function renderMyTodayProgress(){
-        if(habitsChecked === 0){
+
+        habitsList.map( habit => {
+            if(habit.done){
+                qtd++;
+                console.log('aqui', qtd);
+            }
+        });
+
+        console.log(habitsList, qtd);
+
+        const habitsDone = qtd;
+
+        // ver se tem algum jeito de fazer com useState();
+
+        if(habitsDone === 0){
             return <p> Nenhum hábito concluído ainda</p>
         } else{
-            setPercentage((habitsChecked/habitsList.length)*100)
-            return <p> {habitsList.length} {habitsChecked} {percentage} </p>
+            setPercentage((habitsDone/habitsList.length)*100)
+            return <p> {habitsList.length} {qtd} {percentage} </p>
         }
 
     }
@@ -102,18 +118,16 @@ function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsLis
     const [isRecord, setIsRecord] = useState(false);
     
     useEffect(()=> {
-        console.log('oiiii')
         setChecked(isDone);
         if(isDone){
-            setHabitsChecked(habitsChecked + 1);
-            console.log('hey')
             if(currentSequence === highestSequence){
                 setIsRecord(true);
             }
         }
     }, []);
 
-    // falta verificar a maior sequencia!
+
+    // falta verficar a porcentagem que chega!!
 
     function checkHabit(){
         if(checked){
@@ -195,7 +209,7 @@ function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsLis
 export default TodayPage;
 
 const Container = styled.div`
-margin-top: 70px;
+margin: 70px auto 110px auto;
 `
 
 const MyTodayHeader = styled.div`
@@ -216,6 +230,8 @@ const MyHabitBox = styled.div`
     height: 100%;    
     background: lightblue;
     border-radius: 5px;
+    display: flex;
+
 
     button{
         box-sizing: border-box;
