@@ -5,6 +5,7 @@ import * as dayjs from 'dayjs'
 import 'dayjs/locale/pt-br' // import locale
 
 import TokenContext from "../contexts/TokenContext";
+import PercentageContext from "../contexts/PercentageContext";
 import Header from "./Header";
 import Menu from "./Menu";
 
@@ -13,6 +14,7 @@ function TodayPage(){
     const URL = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today'
     
     const {token} = useContext(TokenContext);
+    const {percentage, setPercentage} = useContext(PercentageContext);
     
     const config = {
         headers: {
@@ -21,6 +23,7 @@ function TodayPage(){
     }
         
     const [habitsList, setHabitsList]= useState([]);
+    const [habitsChecked, setHabitsChecked] = useState(0);
     const dayjs = require('dayjs')
     dayjs.locale('pt-br')
     const today = dayjs().format('dddd, DD/MM');
@@ -45,10 +48,22 @@ function TodayPage(){
     }
     console.log(habitsList);
 
+    function renderMyTodayProgress(){
+        if(habitsChecked === 0){
+            return <p> Nenhum hábito concluído ainda</p>
+        } else{
+            setPercentage((habitsChecked/habitsList.length)*100)
+            return <p> {habitsList.length} {habitsChecked} {percentage} </p>
+        }
+
+    }
+
+    const todayProgress = renderMyTodayProgress();
+
     function renderMyTodayHabits(){
 
         return(
-            habitsList.map((habit, index) => <Habit key={index} id={habit.id} name={habit.name} isDone={habit.done} currentSequence={habit.currentSequence} highestSequence={habit.highestSequence} setHabitsList={setHabitsList}  />)
+            habitsList.map((habit, index) => <Habit key={index} id={habit.id} name={habit.name} isDone={habit.done} currentSequence={habit.currentSequence} highestSequence={habit.highestSequence} setHabitsList={setHabitsList} habitsChecked={habitsChecked} setHabitsChecked={setHabitsChecked} />)
         )
             
     }
@@ -59,6 +74,7 @@ function TodayPage(){
         <Header/>
         <MyTodayHeader>
             <h1>{Today}</h1>
+            <h2>{todayProgress}</h2>
         </MyTodayHeader>
         <MyTodayHabits>
             {renderMyTodayHabits()}
@@ -69,7 +85,7 @@ function TodayPage(){
     )
 }
 
-function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsList}){
+function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsList, habitsChecked, setHabitsChecked}){
 
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`
     
@@ -83,36 +99,81 @@ function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsLis
     }
 
     const [checked, setChecked] = useState(false);
-    useEffect(()=> setChecked(isDone), []);
+    const [isRecord, setIsRecord] = useState(false);
+    
+    useEffect(()=> {
+        console.log('oiiii')
+        setChecked(isDone);
+        if(isDone){
+            setHabitsChecked(habitsChecked + 1);
+            console.log('hey')
+            if(currentSequence === highestSequence){
+                setIsRecord(true);
+            }
+        }
+    }, []);
 
+    // falta verificar a maior sequencia!
 
-    function checkHabit(id){
+    function checkHabit(){
         if(checked){
             const promise = axios.post(`${URL}/uncheck`, "", config);
     
-            promise.then(handleSucess);
+            promise.then(handleSucessUncheckHabit);
             promise.catch(handleError);
-            setChecked(false);
         } 
         else{
     
             const promise = axios.post(`${URL}/check`, "", config);
     
-            promise.then(handleSucess);
+            promise.then(handleSucessCheckHabit);
             promise.catch(handleError);
-            setChecked(true);
             
         }
     }
 
-    function handleSucess(){
+    function handleSucessUncheckHabit(){
         const URL2 = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today'
 
         const promise = axios.get(URL2, config);
 
-        promise.then((response) => setHabitsList(response.data))
+        promise.then(handleSucessUptadeHabitsAfterUncheck)
         promise.catch(handleError)
 
+    }
+
+    function handleSucessUptadeHabitsAfterUncheck(response){
+        setHabitsList(response.data);
+        setChecked(false);
+        setHabitsChecked(habitsChecked-1)
+        if(!checked && currentSequence === highestSequence){
+            setIsRecord(true);
+        } else{
+            setIsRecord(false);
+        }
+    
+    }
+
+    function handleSucessCheckHabit(){
+        const URL2 = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today'
+
+        const promise = axios.get(URL2, config);
+
+        promise.then(handleSucessUptadeHabitsAfterCheck)
+        promise.catch(handleError)
+
+    }
+
+    function handleSucessUptadeHabitsAfterCheck(response){
+        setHabitsList(response.data);
+        setChecked(true);
+        setHabitsChecked(habitsChecked+1);
+        if(!checked && currentSequence === highestSequence){
+            setIsRecord(true);
+        } else{
+            setIsRecord(false);
+        }
+    
     }
 
     function handleError(err){
@@ -120,13 +181,13 @@ function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsLis
     }
 
     return(
-        <MyHabitBox checked={checked}>
+        <MyHabitBox checked={checked} isRecord={isRecord}>
             <div>
                 <h1>{name}</h1>
                 <p>{`Sequência atual: `}</p> <h5>{`${currentSequence} dias`}</h5>
                 <p> {`Seu recorde: `}</p> <h6>{`${highestSequence} dias`}</h6>
             </div>
-            <button onClick={()=> checkHabit(id)}><ion-icon name="checkmark"></ion-icon></button>
+            <button onClick={checkHabit}><ion-icon name="checkmark"></ion-icon></button>
         </MyHabitBox>
     )
 }
@@ -168,6 +229,10 @@ const MyHabitBox = styled.div`
 
     h5{
         color: ${props => props.checked ? '#8FC549' : '#666666' };
+    }
+
+    h6{
+        color: ${props => props.isRecord ? '#8FC549' : '#666666' };
     }
 
 
