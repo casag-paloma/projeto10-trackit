@@ -41,7 +41,7 @@ const Container = styled.div`
 const Title = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 26px 17px 5px 17px;
+    padding: 28px 17px 5px 17px;
 
     h1{
         font-size: 23px;

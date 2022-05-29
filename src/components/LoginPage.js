@@ -48,7 +48,7 @@ function LoginPage(){
     }
 
     function toLogin(){
-        if(loading) return <div><LoadingSpinner/> </div>
+        if(loading) return <div><LoadingSpinner height={50} width={50}/> </div>
         else return <> Entrar </>
     }
 

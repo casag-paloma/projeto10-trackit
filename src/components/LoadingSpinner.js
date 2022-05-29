@@ -1,10 +1,11 @@
 import { ThreeDots } from  'react-loader-spinner';
 
-function LoadingSpinner(){
+function LoadingSpinner({height, width}){
     return (
-        <ThreeDots color="#FFFFFF" height={50} width={50} />
+        <ThreeDots color="#FFFFFF" height={height} width={width} />
     )
 
 }
+
 
 export default LoadingSpinner;

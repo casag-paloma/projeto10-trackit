@@ -3,7 +3,10 @@ import axios from 'axios'
 import styled from "styled-components";
 import Header from "./Header";
 import Menu from "./Menu";
+import { createGlobalStyle } from "styled-components";
 import TokenContext from '../contexts/TokenContext';
+import LoadingSpinner from "./LoadingSpinner";
+
 
 function HabitsPage(){
 
@@ -15,7 +18,6 @@ function HabitsPage(){
     headers: {
         "Authorization": `Bearer ${token}`
     }}
-
 
     const [ create, setCreate] = useState(false);
     const [ habitName, setHabitName] = useState('');
@@ -54,7 +56,6 @@ function HabitsPage(){
             }
         })
 
- 
         return(
             <>
                 {weekdaysListToShow.map((day, index) => < Day key={index} name={day.name} id={index} loading={loading} isChosen={day.chosen} chosenDays={chosenDays} setChosenDays={setChosenDays} />)}
@@ -64,15 +65,23 @@ function HabitsPage(){
 
     const myWeekdays = renderWeekDays();
 
+    function toSave(){
+        if(loading) return <LoadingSpinner height={20} width={20}/> 
+        else return <> Salvar </>
+    }
+
+    const saveButton = toSave();
+
+
     function renderNewHabitsForm(){
         if(create){
             return(
                     <HabitForm>
                         <input disabled={loading} type="text" placeholder="nome do hábito" value={habitName} onChange={(e) => setHabitName(e.target.value)}></input>
-                        {myWeekdays}
+                        <div>{myWeekdays}</div>
                         <Buttons>
                             <CancelButton disabled={loading} onClick={()=> setCreate(false)}> Cancelar </CancelButton>
-                            <SaveButton disabled={loading} onClick={submitNewHabit}> Salvar</SaveButton>
+                            <SaveButton disabled={loading} onClick={submitNewHabit}> {saveButton}</SaveButton>
                         </Buttons>
                     </HabitForm>
             )
@@ -120,18 +129,20 @@ function HabitsPage(){
     }
 
     return(
-        <Container>
+        <>
+            <LocalStyle/>
             <Header/>
-            <MyHabitsHeader>
-                <h1> Essa é uma HabitsPage</h1>
-                <button onClick={addNewHabit}> + </button>
-            </MyHabitsHeader>
-            <MyNewHabitForm>
-                <div>{newHabitForm}</div>
-            </MyNewHabitForm>
-            <MyHabits>{myHabits}</MyHabits>
+            <Container>
+                <Title> 
+                    <h1> Meus hábitos </h1>
+                    <button onClick={addNewHabit}> + </button>
+                </Title>
+                <div> {newHabitForm} </div>
+                <MyHabits>{myHabits}</MyHabits>
+            </Container>
             <Menu/>
-        </Container>
+
+        </>
     )
 }
 
@@ -211,34 +222,45 @@ function HabitUser({id, name, days, setHabitsUser}){
 
 
     return(
-        <div>
+        <MyHabitBox>
             <p>{name}</p>
-            {showDaysHabits()}
+            <div>{showDaysHabits()}</div>
             <ion-icon name="trash-outline" onClick={() => deleteHabit(id)}></ion-icon>
-        </div>
+        </MyHabitBox>
     )
 }
 
 export default HabitsPage;
 
+const LocalStyle = createGlobalStyle`
+body {
+    background-color: #F2F2F2;
+
+    font-family: 'Lexend Deca';
+    font-style: normal;
+    font-weight: 400;
+}
+
+`
 const Container = styled.div`
     width: 100%;
-    height:100%;
-    background-color: #F2F2F2;;
-`
+    margin: 70px auto 75px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-const MyHabitsHeader = styled.div`
+`
+const Title = styled.div`
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 70px 18px 10px 18px;
-    
+    padding: 28px 17px 20px 17px;
+
     h1{
-        font-family: 'Lexend Deca';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 22.976px;
+        font-size: 23px;
         line-height: 29px;
+        margin-left: 17px;
 
         color: #126BA5;
     }
@@ -246,27 +268,107 @@ const MyHabitsHeader = styled.div`
     button{
         width: 40px;
         height: 35px;
+        padding: 0;
+        margin-right: 17px;
     
         background: #52B6FF;
         border-radius: 5px;
 
-        font-family: 'Lexend Deca';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 28px;
-        line-height: 34px;
+        font-size: 27px;
         text-align: center;
 
         color: #FFFFFF;
+
+        :hover{
+            cursor: pointer;
+        }
     }
 
 `
-const MyNewHabitForm = styled.div``
 
 const MyHabits = styled.div`
+
+    display: flex;
+    flex-direction: column;
+    margin: 0 17px;
+
+    p{
+        font-size: 18px;
+        line-height: 22px;
+        margin-top: 8px;  
+
+        color: #666666;
+    }
+
 `
+const MyHabitBox = styled.div`
+    width: 340px;
+    min-height: 91px;
+    position: relative;
+    margin-bottom: 10px;
+
+    background: #FFFFFF;
+    border-radius: 5px;
+
+    p{
+        font-size: 20px;
+        line-height: 25px;
+        color: #666666;
+        
+        padding: 13px 0 8px 15px;
+
+    }
+
+    div{
+        padding: 0 0 15px 14px;
+    }
+
+    ion-icon{
+        position: absolute;
+        top: 11px;
+        right: 10px;
+
+        :hover{
+            cursor: pointer;
+        }
+    }
+`
+
 const HabitForm = styled.div`
-    background-color: red;
+    width: 340px;
+    height: 180px;
+    position: relative;
+    margin-bottom: 20px;
+    
+    background: #FFFFFF;
+    border-radius: 5px;
+
+    display:flex;
+    flex-direction: column;
+
+    input{            
+        box-sizing: border-box;
+        width: 303px;
+        height: 45px;
+        margin: 18px 18px 8px 18px;
+        background: #FFFFFF;
+        border: 1px solid #D5D5D5;
+        border-radius: 5px;
+
+        font-size: 20px;
+        line-height: 25px;
+        color: #666666;
+
+        :placeholder{
+            font-size: 20px;
+            line-height: 25px;        
+            color: #DBDBDB;
+        }
+    }
+
+    div{
+        margin-left: 18px;
+    }
 
 `
 
@@ -274,6 +376,7 @@ const DayButton = styled.button`
     box-sizing: border-box;
     width: 30px;
     height: 30px;
+    margin-right: 4px;
         
     background-color: ${props => props.chosen ? '#CFCFCF' : '#FFFFFF' } ;
     border: 1px solid #D5D5D5;
@@ -285,8 +388,55 @@ const DayButton = styled.button`
     font-size: 20px;
     line-height: 25px;
     color: ${props => props.chosen ? '#FFFFFF' : '#DBDBDB' };
+
+    :hover{
+        cursor: pointer;
+    }
 `
 
-const Buttons = styled.div``
-const CancelButton = styled.button``
-const SaveButton = styled.button``
+const Buttons = styled.div`
+    position: absolute;
+    right: 16px;
+    bottom: 15px;
+`
+const CancelButton = styled.button`
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    border: none;
+    background-color: #FFFFFF;
+    color: #52B6FF;
+    margin-right: 23px;
+
+    &&:hover{
+        cursor: pointer;
+    }
+
+`
+const SaveButton = styled.button`
+    width: 84px;
+    height: 35px;
+    background: #52B6FF;
+    border-radius: 5px;
+    padding: 0;
+
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    
+    color: #FFFFFF;
+    
+    div{
+        width: 84px;
+        height: 35px;
+        display: flex;
+        justify-content: center;
+        align-items:center;
+        margin: 0;
+        
+    }
+
+    &&:hover{
+        cursor: pointer;
+    }
+`
