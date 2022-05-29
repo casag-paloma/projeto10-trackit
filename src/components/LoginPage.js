@@ -166,6 +166,10 @@ const FormLogin = styled.form`
         text-align: center;
 
         color: #FFFFFF;
+
+        :hover{
+            cursor: pointer;
+        }
     }
 
 `
