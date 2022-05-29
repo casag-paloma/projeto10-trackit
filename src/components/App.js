@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react/";
+import GlobalStyle from "./globalStyles";
 import UserContext from "../contexts/UserContext";
 import TokenContext from "../contexts/TokenContext";
 import PercentageContext from "../contexts/PercentageContext";
@@ -20,6 +21,7 @@ function App(){
         <UserContext.Provider value={{user, setUser}}>
             <TokenContext.Provider value={{token, setToken}}>
             <PercentageContext.Provider value={{percentage, setPercentage}}>
+                <GlobalStyle/>
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<LoginPage/>}/>

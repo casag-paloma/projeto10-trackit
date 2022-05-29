@@ -1,8 +1,8 @@
-import { BallTriangle } from  'react-loader-spinner';
+import { ThreeDots } from  'react-loader-spinner';
 
 function LoadingSpinner(){
     return (
-        <BallTriangle color="#00BFFF" height={80} width={80} /> 
+        <ThreeDots color="#FFFFFF" height={50} width={50} />
     )
 
 }

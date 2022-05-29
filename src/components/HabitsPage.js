@@ -3,7 +3,7 @@ import axios from 'axios'
 import styled from "styled-components";
 import Header from "./Header";
 import Menu from "./Menu";
-import TokenContext from '../contexts/TokenContext'
+import TokenContext from '../contexts/TokenContext';
 
 function HabitsPage(){
 
