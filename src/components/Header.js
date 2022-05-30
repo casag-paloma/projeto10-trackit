@@ -8,7 +8,7 @@ function Header(){
     const {user} = useContext(UserContext);
     return (
         <Container>
-            <img src={logo_topo} alt='Logo Topo' />
+            <h1> TrackIt </h1>
             <User> 
                 <img src={user} alt='User'/>
             </User>
@@ -24,6 +24,8 @@ const Container = styled.div`
     position: fixed;
     left: 0px;
     top: 0px;
+    z-index: 1;
+    padding: auto 18px;
 
     background-color: #126BA5;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
@@ -32,6 +34,21 @@ const Container = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    h1{
+        font-family: 'Playball';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 39px;
+        line-height: 49px;
+
+        color: #FFFFFF;
+        margin: auto 18px;
+
+        :hover{
+            cursor: default;
+        }
+    }
 
     img{
         width: 97px;

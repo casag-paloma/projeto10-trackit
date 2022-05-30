@@ -240,8 +240,8 @@ body {
     font-style: normal;
     font-weight: 400;
 }
-
 `
+
 const Container = styled.div`
     width: 100%;
     margin: 70px auto 75px auto;
