@@ -110,10 +110,22 @@ function HabitsPage(){
             days: chosenDays 
         }
 
-        const promise = axios.post(URL, body, config);
+        if(habitName.length > 0 && chosenDays.length > 0){
+            const promise = axios.post(URL, body, config);
+    
+            promise.then(handleSuccessPostNewHabit);
+            promise.catch(handleError);
+        }
+        else if(habitName.length === 0){
+            alert('Escreva o nome de um hábito válido');
+            setLoading(false);
+        }
+        else if(chosenDays.length === 0){
+            alert('Escolha pelo menos 1 dia para seu novo hábito');
+            setLoading(false);
+        }
 
-        promise.then(handleSuccessPostNewHabit);
-        promise.catch(handleError);
+
     }
 
     function handleSuccessPostNewHabit(response){
