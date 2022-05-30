@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { createGlobalStyle } from "styled-components";
 import * as dayjs from 'dayjs'
-import 'dayjs/locale/pt-br' // import locale
+import 'dayjs/locale/pt-br' 
 
 import TokenContext from "../contexts/TokenContext";
 import PercentageContext from "../contexts/PercentageContext";
@@ -24,8 +24,7 @@ function TodayPage(){
     }
         
     const [habitsList, setHabitsList]= useState([]);
-    const [habitsChecked, setHabitsChecked] = useState(0);
-    let habitsDone =0;
+    const [habitsDone, setHabitsDone] = useState([]);
     const dayjs = require('dayjs')
     dayjs.locale('pt-br')
     const today = dayjs().format('dddd, DD/MM');
@@ -42,27 +41,20 @@ function TodayPage(){
 
     function handleSucess(response){
         setHabitsList(response.data);
+        setHabitsDone(response.data.filter( habit => habit.done))
+
     }
 
     function handleError(err){
         console.log(err.response.data)
     }
-
     
     function renderMyTodayProgress(){
-
-        habitsList.map( habit => {
-            if(habit.done){
-                habitsDone++;
-            }
-        });
-
-        // ver se tem algum jeito de fazer com useState();
-
-        if(habitsDone === 0){
+        
+        if(habitsDone.length === 0){
             return <p> Nenhum hábito concluído ainda</p>
         } else{
-            setPercentage(((habitsDone/habitsList.length)*100).toFixed(0))
+            setPercentage(((habitsDone.length/habitsList.length)*100).toFixed(0))
             return <Subtitle> {` ${percentage}% dos hábitos concluídos`} </Subtitle>
         }
 
@@ -73,7 +65,7 @@ function TodayPage(){
     function renderMyTodayHabits(){
 
         return(
-            habitsList.map((habit, index) => <Habit key={index} id={habit.id} name={habit.name} isDone={habit.done} currentSequence={habit.currentSequence} highestSequence={habit.highestSequence} setHabitsList={setHabitsList} habitsChecked={habitsChecked} setHabitsChecked={setHabitsChecked} />)
+            habitsList.map((habit, index) => <Habit key={index} id={habit.id} name={habit.name} isDone={habit.done} currentSequence={habit.currentSequence} highestSequence={habit.highestSequence} setHabitsList={setHabitsList} setHabitsDone={setHabitsDone} />)
         )
             
     }
@@ -96,10 +88,9 @@ function TodayPage(){
     )
 }
 
-function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsList, habitsChecked, setHabitsChecked}){
+function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsList, setHabitsDone}){
 
-    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`
-    
+    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`    
 
     const {token} = useContext(TokenContext);
     
@@ -115,7 +106,7 @@ function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsLis
     useEffect(()=> {
         setChecked(isDone);
         if(isDone){
-            if(currentSequence === highestSequence){
+            if(currentSequence >= highestSequence){
                 setIsRecord(true);
             }
         }
@@ -150,9 +141,9 @@ function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsLis
 
     function handleSucessUptadeHabitsAfterUncheck(response){
         setHabitsList(response.data);
+        setHabitsDone(response.data.filter( habit => habit.done));
         setChecked(false);
-        setHabitsChecked(habitsChecked-1)
-        if(!checked && currentSequence === highestSequence){
+        if(!checked && currentSequence >= highestSequence){
             setIsRecord(true);
         } else{
             setIsRecord(false);
@@ -172,9 +163,9 @@ function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsLis
 
     function handleSucessUptadeHabitsAfterCheck(response){
         setHabitsList(response.data);
+        setHabitsDone(response.data.filter( habit => habit.done));
         setChecked(true);
-        setHabitsChecked(habitsChecked+1);
-        if(!checked && currentSequence === highestSequence){
+        if(!checked && currentSequence >= highestSequence){
             setIsRecord(true);
         } else{
             setIsRecord(false);
@@ -278,6 +269,7 @@ const MyHabitBox = styled.div`
         font-size: 20px;
         line-height: 25px;
         color: #666666;
+        word-wrap:break-word;
     }
 
     button{
@@ -289,6 +281,10 @@ const MyHabitBox = styled.div`
         background-color: ${props => props.checked ? '#8FC549' : '#EBEBEB' };
         border: 1px solid #E7E7E7;
         border-radius: 5px;
+
+        :hover{
+            cursor: pointer;
+        }
     }
 
     p{

@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 import styled from 'styled-components'
-import logo_topo from '../assets/logo_topo.png'
 import UserContext from '../contexts/UserContext';
 
 function Header(){
