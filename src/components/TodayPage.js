@@ -25,7 +25,7 @@ function TodayPage(){
         
     const [habitsList, setHabitsList]= useState([]);
     const [habitsChecked, setHabitsChecked] = useState(0);
-    let qtd =0;
+    let habitsDone =0;
     const dayjs = require('dayjs')
     dayjs.locale('pt-br')
     const today = dayjs().format('dddd, DD/MM');
@@ -42,27 +42,20 @@ function TodayPage(){
 
     function handleSucess(response){
         setHabitsList(response.data);
-        console.log(response.data)
     }
 
     function handleError(err){
         console.log(err.response.data)
     }
-    console.log(habitsList);
 
     
     function renderMyTodayProgress(){
 
         habitsList.map( habit => {
             if(habit.done){
-                qtd++;
-                console.log('aqui', qtd);
+                habitsDone++;
             }
         });
-
-        console.log(habitsList, qtd);
-
-        const habitsDone = qtd;
 
         // ver se tem algum jeito de fazer com useState();
 
@@ -127,9 +120,6 @@ function Habit({id, name, isDone, currentSequence, highestSequence, setHabitsLis
             }
         }
     }, []);
-
-
-    // falta verficar a porcentagem que chega!!
 
     function checkHabit(){
         if(checked){
@@ -271,6 +261,8 @@ const MyTodayHabits = styled.div`
 const MyHabitBox = styled.div`
     width: 340px;
     min-height: 94px;
+    box-sizing: border-box;
+    padding: 13px 15px;
     background: #FFFFFF;
     border-radius: 5px;
     display: flex;
@@ -281,7 +273,8 @@ const MyHabitBox = styled.div`
 
 
     h1{
-        padding: 13px 100px 7px 15px;
+        width: 230px;
+        padding-bottom:7px;
         font-size: 20px;
         line-height: 25px;
         color: #666666;
@@ -291,7 +284,7 @@ const MyHabitBox = styled.div`
         box-sizing: border-box;
         width: 69px;
         height: 69px;
-        margin: auto 15px;
+        margin: auto 0;
             
         background-color: ${props => props.checked ? '#8FC549' : '#EBEBEB' };
         border: 1px solid #E7E7E7;
@@ -321,5 +314,4 @@ const MyHabitBox = styled.div`
 const Text = styled.div`
     display: flex;
     flex-direction: row;
-    margin-left: 15px;
 `

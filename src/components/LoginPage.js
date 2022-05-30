@@ -26,8 +26,6 @@ function LoginPage(){
             password
         }
 
-        console.log('uhull', formData);
-
 
         const promise = axios.post(URL, formData);
 
@@ -39,7 +37,6 @@ function LoginPage(){
         setUser(response.data.image)
         setToken(response.data.token);
         navigate('/hoje')
-        console.log(response.data, response.data.token);
     };
 
     function handleError(err){

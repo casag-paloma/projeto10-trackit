@@ -121,7 +121,6 @@ function HabitsPage(){
         setChosenDays([]);
         setLoading(false);
         setCreate(false);
-        console.log(response.data);
 
         const promise = axios.get(URL, config);
         promise.then(handleSucessGetList)
@@ -148,7 +147,6 @@ function HabitsPage(){
 
 function Day({name, id, chosenDays, setChosenDays, loading, isChosen}){
     const [chosen, setChosen] = useState(false);
-    console.log(isChosen);
 
     useEffect(()=> setChosen(isChosen), []);
 
@@ -311,11 +309,13 @@ const MyHabitBox = styled.div`
     border-radius: 5px;
 
     p{
+        width: 300px;
         font-size: 20px;
         line-height: 25px;
         color: #666666;
         
         padding: 13px 0 8px 15px;
+        word-wrap: break-word;
 
     }
 

@@ -26,9 +26,6 @@ function SignUpPage(){
             password
         }
 
-        console.log('uhull', formData);
-
-
         const promise = axios.post(URL, formData);
 
         promise.then(handleSuccess);
@@ -36,7 +33,6 @@ function SignUpPage(){
     }
 
     function handleSuccess(response){
-        console.log(response.data);
         navigate('/')
     };
 
