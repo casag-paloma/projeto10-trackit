@@ -10,12 +10,11 @@ import LoginPage from "./LoginPage";
 import SignUpPage from "./SignUpPage";
 import TodayPage from "./TodayPage";
 
-
 function App(){
 
     const [user, setUser] = useState("");
     const [token, setToken] = useState("");
-    const [percentage, setPercentage] = useState("");
+    const [percentage, setPercentage] = useState(0);
 
     return(
         <UserContext.Provider value={{user, setUser}}>

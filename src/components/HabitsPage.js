@@ -244,7 +244,7 @@ body {
 
 const Container = styled.div`
     width: 100%;
-    margin: 70px auto 75px auto;
+    margin: 70px auto 105px auto;
     display: flex;
     flex-direction: column;
     align-items: center;

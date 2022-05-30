@@ -69,7 +69,7 @@ function TodayPage(){
         if(habitsDone === 0){
             return <p> Nenhum hábito concluído ainda</p>
         } else{
-            setPercentage((habitsDone/habitsList.length)*100)
+            setPercentage(((habitsDone/habitsList.length)*100).toFixed(0))
             return <Subtitle> {` ${percentage}% dos hábitos concluídos`} </Subtitle>
         }
 
